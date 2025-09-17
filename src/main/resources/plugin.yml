@@ -1,0 +1,11 @@
+name: SocialManager
+version: '1.0'
+main: fr.tableikea.socialmanager.Main
+api-version: '1.21'
+prefix: Social Manager
+authors: [ TableIkea_ ]
+website: www.obsidia.network
+description: A plugin to manage social interactions on your server.
+commands:
+    friends:
+        description: Manage your friends list.
