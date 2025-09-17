@@ -2,6 +2,7 @@ package fr.tableikea.socialmanager.commands;
 
 import fr.tableikea.socialmanager.models.Profil;
 import fr.tableikea.socialmanager.utils.ItemBuilder;
+import fr.tableikea.socialmanager.utils.MessageUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -47,7 +48,7 @@ public class FriendsCommand implements TabExecutor {
                     Player target = Bukkit.getPlayer(args[1]);
 
                     if(target == player){
-                        player.sendMessage("§cVous ne pouvez pas vous envoyer une demande d'ami à vous-même.");
+                        MessageUtils.send(player, "cannot_add_self");
                         return false;
                     }
 
@@ -61,13 +62,13 @@ public class FriendsCommand implements TabExecutor {
                             Profil.profils.put(target, targetProfil);
                         }
                         if(targetProfil.friendRequestsReceived.contains(player)){
-                            player.sendMessage("§cVous avez déjà envoyé une demande d'ami à ce joueur.");
+                            MessageUtils.send(player, "already_sent_request");
                             return false;
                         }else{
                             targetProfil.friendRequestsReceived.add(player);
                             playerProfil.friendRequestsSended.add(target);
-                            player.sendMessage("§aVous avez envoyé une demande d'ami à " + target.getName() + " !");
-                            target.sendMessage("§aVous avez reçu une demande d'ami de " + player.getName() + " !");
+                            MessageUtils.send(player, "friend_request_sent", "{player}", target.getName());
+                            MessageUtils.send(target, "friend_request_received", "{player}", player.getName());
                         }
 
                     }
@@ -82,10 +83,10 @@ public class FriendsCommand implements TabExecutor {
                                 playerProfil.friendRequestsSended.remove(target);
                                 targetProfil.friends.add(player);
                                 playerProfil.friends.add(target);
-                                player.sendMessage("§aVous avez accepté la demande d'ami de " + target.getName() + " !");
-                                target.sendMessage("§a" + player.getName() + " a accepté votre demande d'ami !");
+                                MessageUtils.send(player, "friend_request_accepted", "{player}", target.getName());
+                                MessageUtils.send(target, "your_request_accepted", "{player}", player.getName());
                             }else{
-                                player.sendMessage("§cVous n'avez pas de demande d'ami de ce joueur.");
+                                MessageUtils.send(player, "no_request_from_player");
                             }
                         }
                     }
@@ -98,10 +99,10 @@ public class FriendsCommand implements TabExecutor {
                             if(targetProfil.friendRequestsReceived.contains(player)){
                                 targetProfil.friendRequestsReceived.remove(player);
                                 playerProfil.friendRequestsSended.remove(target);
-                                player.sendMessage("§cVous avez refusé la demande d'ami de " + target.getName() + " !");
-                                target.sendMessage("§c" + player.getName() + " a refusé votre demande d'ami !");
+                                MessageUtils.send(player, "friend_request_declined", "{player}", target.getName());
+                                MessageUtils.send(target, "your_request_declined", "{player}", player.getName());
                             }else{
-                                player.sendMessage("§cVous n'avez pas de demande d'ami de ce joueur.");
+                                MessageUtils.send(player, "no_request_from_player");
                             }
                         }
                     }
@@ -113,10 +114,10 @@ public class FriendsCommand implements TabExecutor {
                             if(targetProfil.friends.contains(player)){
                                 targetProfil.friends.remove(player);
                                 playerProfil.friends.remove(target);
-                                player.sendMessage("§cVous avez supprimé " + target.getName() + " de votre liste d'amis.");
-                                target.sendMessage("§c" + player.getName() + " vous a supprimé de sa liste d'amis.");
+                                MessageUtils.send(player, "friend_removed", "{player}", target.getName());
+                                MessageUtils.send(target, "removed_by_friend", "{player}", player.getName());
                             }else{
-                                player.sendMessage("§cCe joueur n'est pas dans votre liste d'amis.");
+                                MessageUtils.send(player, "not_in_friends");
                             }
                         }
                     }
@@ -132,14 +133,14 @@ public class FriendsCommand implements TabExecutor {
                             Profil.profils.put(target, targetProfil);
                         }
                         if(playerProfil.blocked.contains(target)){
-                            player.sendMessage("§cVous avez déjà bloqué ce joueur.");
+                            MessageUtils.send(player, "already_blocked");
                             return false;
                         }else{
                             playerProfil.blocked.add(target);
                             playerProfil.friends.remove(target);
                             targetProfil.friends.remove(player);
-                            player.sendMessage("§aVous avez bloqué " + target.getName() + " !");
-                            target.sendMessage("§cVous avez été bloqué par " + player.getName() + " !");
+                            MessageUtils.send(player, "player_blocked", "{player}", target.getName());
+                            MessageUtils.send(target, "you_are_blocked", "{player}", player.getName());
                         }
 
                     }
@@ -149,26 +150,26 @@ public class FriendsCommand implements TabExecutor {
                     if(target != null){
                         if(playerProfil.blocked.contains(target)){
                             playerProfil.blocked.remove(target);
-                            player.sendMessage("§aVous avez débloqué " + target.getName() + " !");
-                            target.sendMessage("§aVous avez été débloqué par " + player.getName() + " !");
+                            MessageUtils.send(player, "player_unblocked", "{player}", target.getName());
+                            MessageUtils.send(target, "you_are_unblocked", "{player}", player.getName());
                         }else{
-                            player.sendMessage("§cCe joueur n'est pas dans votre liste de joueurs bloqués.");
+                            MessageUtils.send(player, "not_in_blocked");
                         }
                     }
 
                 }else if(argument.equalsIgnoreCase("list")){
-                    player.sendMessage("§6--- Liste d'amis ---");
+                    MessageUtils.send(player, "friends_list_header");
                     if(playerProfil.friends.isEmpty()){
-                        player.sendMessage("§cVous n'avez pas d'amis.");
+                        MessageUtils.send(player, "friends_list_empty");
                     }else{
                         for(Player friend : playerProfil.friends){
-                            player.sendMessage("§a- " + friend.getName());
+                            MessageUtils.send(player, "friends_list_entry", "{player}", friend.getName());
                         }
                     }
-                    player.sendMessage("§6-------------------");
+                    MessageUtils.send(player, "friends_list_footer");
 
                 }else{
-                    player.sendMessage("§cArgument invalide. Utilisez /friends <invite|accept|decline|remove|block|unblock|list> [joueur]");
+                    MessageUtils.send(player, "invalid_argument");
                 }
             }
 
