@@ -7,5 +7,5 @@ authors: [ TableIkea_ ]
 website: www.obsidia.network
 description: A plugin to manage social interactions on your server.
 commands:
-    friends:
-        description: Manage your friends list.
+  friends:
+    description: Manage your friends list.

@@ -7,12 +7,16 @@ SocialManager est un plugin Minecraft Paper permettant de gérer les interaction
 - Ajouter, accepter, refuser ou supprimer des amis
 - Envoyer et recevoir des demandes d’amis
 - Bloquer et débloquer des joueurs
-- Interface graphique pour voir la liste d’amis
+- Interface graphique pour voir la liste d'amis, demandes, bloqués, et tous les joueurs du serveur
 - Commandes simples et intuitives
 
 ## Commandes
 
-- `/friends` : Ouvre le menu des amis
+- `/friends` : Ouvre le menu principal SocialManager avec :
+    - Liste d'amis
+    - Liste des demandes d'amis
+    - Liste des joueurs bloqués
+    - Liste de tous les joueurs du serveur (ajout via clic gauche)
 - `/friends invite <joueur>` : Envoie une demande d’ami
 - `/friends accept <joueur>` : Accepte une demande d’ami
 - `/friends decline <joueur>` : Refuse une demande d’ami

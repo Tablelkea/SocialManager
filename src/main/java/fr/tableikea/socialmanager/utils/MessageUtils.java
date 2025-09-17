@@ -1,5 +1,6 @@
 package fr.tableikea.socialmanager.utils;
 
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -16,10 +17,14 @@ public class MessageUtils {
         for (int i = 0; i < replacements.length; i += 2) {
             msg = msg.replace(replacements[i], replacements[i + 1]);
         }
-        return msg;
+        return config.getString("messages.prefix") + msg;
     }
 
     public static void send(Player player, String key, String... replacements) {
         player.sendMessage(getMessage(key, replacements));
+    }
+
+    public static void send(CommandSender sender, String key, String... replacements) {
+        sender.sendMessage(getMessage(key, replacements));
     }
 }

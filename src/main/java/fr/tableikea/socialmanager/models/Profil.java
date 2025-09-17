@@ -13,8 +13,7 @@ public class Profil {
     public ArrayList<Player> friendRequestsSended;
     public ArrayList<Player> friendRequestsReceived;
 
-    public static Map<Player, Profil> profils = new HashMap<>() {
-    };
+    public static Map<Player, Profil> profils = new HashMap<>();
 
     public Profil(Player player) {
         this.player = player;
@@ -49,7 +48,7 @@ public class Profil {
     public void blockPlayer(Player player) {
         if (!blocked.contains(player)) {
             blocked.add(player);
-            friends.remove(player); // Remove from friends if blocking
+            friends.remove(player);
         }
     }
 
@@ -60,19 +59,23 @@ public class Profil {
     public ArrayList<Player> getFriendRequestsSended() {
         return friendRequestsSended;
     }
+
     public ArrayList<Player> getFriendRequestsReceived() {
         return friendRequestsReceived;
     }
+
     public void sendFriendRequest(Player to) {
         if (!friendRequestsSended.contains(to) && !friends.contains(to) && !blocked.contains(to)) {
             friendRequestsSended.add(to);
         }
     }
+
     public void receiveFriendRequest(Player from) {
         if (!friendRequestsReceived.contains(from) && !friends.contains(from) && !blocked.contains(from)) {
             friendRequestsReceived.add(from);
         }
     }
+
     public void acceptFriendRequest(Player from) {
         if (friendRequestsReceived.contains(from)) {
             friendRequestsReceived.remove(from);

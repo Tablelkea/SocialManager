@@ -11,45 +11,44 @@ public class ItemBuilder {
     private ItemStack item;
     private ItemMeta itemM;
 
-    public ItemBuilder() {
-    }
+    public ItemBuilder() {}
 
-    public ItemBuilder(Material material, int amont, String displayname, List<String> lore) {
-        this.item = new ItemStack(material, amont);
+    public ItemBuilder(Material material, int amount, String displayname, List<String> lore) {
+        this.item = new ItemStack(material, amount);
         this.itemM = this.item.getItemMeta();
         this.itemM.setDisplayName(displayname);
         this.itemM.setLore(lore);
         this.item.setItemMeta(this.itemM);
     }
 
-    public ItemBuilder(ItemStack itemStack, int amont, String displayname, List<String> lore) {
+    public ItemBuilder(ItemStack itemStack, int amount, String displayname, List<String> lore) {
         this.item = itemStack;
-        this.item.setAmount(amont);
+        this.item.setAmount(amount);
         this.itemM = this.item.getItemMeta();
         this.itemM.setDisplayName(displayname);
         this.itemM.setLore(lore);
         this.item.setItemMeta(this.itemM);
     }
 
-    public ItemBuilder(Material material, int amont, Component displayname, List<Component> lore) {
-        this.item = new ItemStack(material, amont);
+    public ItemBuilder(Material material, int amount, Component displayname, List<Component> lore) {
+        this.item = new ItemStack(material, amount);
         this.itemM = this.item.getItemMeta();
         this.itemM.displayName(displayname);
         this.itemM.lore(lore);
         this.item.setItemMeta(this.itemM);
     }
 
-    public ItemBuilder(ItemStack itemStack, int amont, Component displayname, List<Component> lore) {
+    public ItemBuilder(ItemStack itemStack, int amount, Component displayname, List<Component> lore) {
         this.item = itemStack;
-        this.item.setAmount(amont);
+        this.item.setAmount(amount);
         this.itemM = this.item.getItemMeta();
         this.itemM.displayName(displayname);
         this.itemM.lore(lore);
         this.item.setItemMeta(this.itemM);
     }
 
-    public ItemBuilder(Material material, int amont, String displayname) {
-        this((Material)material, amont, (String)displayname, (List)null);
+    public ItemBuilder(Material material, int amount, String displayname) {
+        this(material, amount, displayname, null);
     }
 
     public ItemStack getItem() {
