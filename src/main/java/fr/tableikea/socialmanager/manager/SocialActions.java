@@ -1,4 +1,6 @@
-package fr.tableikea.socialmanager.models;
+package fr.tableikea.socialmanager.manager;
+
+import fr.tableikea.socialmanager.models.Profil;
 
 public class SocialActions {
 

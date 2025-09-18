@@ -1,7 +1,8 @@
 package fr.tableikea.socialmanager.listeners;
 
+import fr.tableikea.socialmanager.manager.FriendCommandHandler;
 import fr.tableikea.socialmanager.models.Profil;
-import fr.tableikea.socialmanager.models.SocialActions;
+import fr.tableikea.socialmanager.manager.SocialActions;
 import fr.tableikea.socialmanager.utils.ItemBuilder;
 import fr.tableikea.socialmanager.utils.MessageUtils;
 import org.bukkit.Bukkit;
@@ -13,6 +14,7 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.List;
 
@@ -158,6 +160,15 @@ public class FriendsGuiEvent implements Listener {
             Profil targetProfil = Profil.profils.get(target);
 
             if (event.getClick() == ClickType.LEFT) {
+                int maxFriends = JavaPlugin.getProvidingPlugin(getClass()).getConfig().getInt("settings.max_friends", 100);
+                if (!FriendCommandHandler.isBypassFriendLimit(player) && playerProfil.friends.size() >= maxFriends) {
+                    MessageUtils.send(player, "max_friends_reached");
+                    return;
+                }
+                if (!FriendCommandHandler.isBypassFriendLimit(target) && targetProfil.friends.size() >= maxFriends) {
+                    MessageUtils.send(player, "target_max_friends_reached", "{player}", target.getName());
+                    return;
+                }
                 if (playerProfil.friends.contains(target) || targetProfil.friendRequestsReceived.contains(player)) {
                     MessageUtils.send(player, "already_sent_request");
                     return;

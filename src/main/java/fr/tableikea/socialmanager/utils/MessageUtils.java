@@ -27,4 +27,12 @@ public class MessageUtils {
     public static void send(CommandSender sender, String key, String... replacements) {
         sender.sendMessage(getMessage(key, replacements));
     }
+
+    public static String getSettings(String folder, String key, String... replacements) {
+        String msg = config.getString(folder + "." + key, "");
+        for (int i = 0; i < replacements.length; i += 2) {
+            msg = msg.replace(replacements[i], replacements[i + 1]);
+        }
+        return msg;
+    }
 }

@@ -9,3 +9,6 @@ description: A plugin to manage social interactions on your server.
 commands:
   friends:
     description: Manage your friends list.
+  socialconfig:
+    description: Reload the configuration of the SocialManager plugin.
+    permission: socialmanager.admin

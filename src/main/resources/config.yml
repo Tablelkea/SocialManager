@@ -24,5 +24,20 @@ messages:
   friends_list_footer: "§6------------------------"
   invalid_argument: "§cArgument invalide. Utilisez §e/friends <invite|accept|decline|remove|block|unblock|list> [joueur]"
   only_players: "§cSeuls les joueurs peuvent utiliser cette commande."
+  config-reloaded: "§aConfiguration rechargée avec succès."
+  max_friends_reached: "§cVous avez atteint la limite maximale d'amis."
+  target_max_friends_reached: "§c{player} a atteint la limite maximale d'amis."
+  bypass_enabled: "§aLe bypass de la limite d'amis est §2activé§a."
+  bypass_disabled: "§cLe bypass de la limite d'amis est §4désactivé§c."
+  no_permission: "§cVous n'avez pas la permission d'utiliser cette commande."
+  friend_force_added: "§aVous avez ajouté {player} à votre liste d'amis en forçant la limite."
+  friend_force_added_by: "§a{player} vous a ajouté à sa liste d'amis en forçant la limite."
+
+plugin-info:
+  version: "1.0.1"
+  author: "TableIkea_"
+  website: "https://github.com/Tablelkea/SocialManager"
+settings:
+    max_friends: 100
 
 allow_self_friend: true
