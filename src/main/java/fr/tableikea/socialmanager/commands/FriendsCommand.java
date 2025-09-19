@@ -11,15 +11,12 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-import java.util.UUID;
 
 public class FriendsCommand implements TabExecutor, Listener {
 
@@ -35,6 +32,7 @@ public class FriendsCommand implements TabExecutor, Listener {
         }
 
         boolean allowSelfFriend = JavaPlugin.getProvidingPlugin(getClass()).getConfig().getBoolean("allow_self_friend", false);
+        Profil playerProfil = Profil.profils.computeIfAbsent(player, Profil::new);
 
         if (args.length == 0) {
             Inventory mainMenu = Bukkit.createInventory(null, 27, Component.text("§8§lSOCIAL - Menu"));
@@ -46,10 +44,9 @@ public class FriendsCommand implements TabExecutor, Listener {
             return true;
         }
 
-        String argument = args[0];
-        Profil playerProfil = Profil.profils.computeIfAbsent(player, Profil::new);
+        String argument = args[0].toLowerCase();
 
-        if (argument.equalsIgnoreCase("bypasslimit")) {
+        if (argument.equals("bypasslimit")) {
             if (!player.isOp()) {
                 MessageUtils.send(player, "no_permission");
                 return true;
@@ -60,111 +57,71 @@ public class FriendsCommand implements TabExecutor, Listener {
             return true;
         }
 
-        switch (argument.toLowerCase()) {
+        switch (argument) {
             case "invite" -> FriendCommandHandler.handleInvite(player, args, playerProfil, allowSelfFriend);
             case "accept" -> FriendCommandHandler.handleAccept(player, args, playerProfil);
-            case "decline" -> FriendCommandHandler.handleDecline(player, args, playerProfil);
-            case "remove" -> FriendCommandHandler.handleRemove(player, args, playerProfil);
-            case "block" -> FriendCommandHandler.handleBlock(player, args, playerProfil, this);
+            case "decline" -> FriendCommandHandler.handleDecline(player, args, Profil.profils.get(player));
+            case "remove" -> FriendCommandHandler.handleRemove(player, args, Profil.profils.get(player));
+            case "block" -> FriendCommandHandler.handleBlock(player, args, playerProfil);
             case "unblock" -> FriendCommandHandler.handleUnblock(player, args, playerProfil);
             case "list" -> FriendCommandHandler.handleList(player, playerProfil);
             default -> MessageUtils.send(player, "invalid_argument");
         }
+
         return true;
     }
 
     @Override
     public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
+        if (!(sender instanceof Player player)) return List.of();
 
-        if(args.length == 1){
-            return List.of("invite", "accept", "decline", "remove", "block", "unblock", "list");
-        }else if(args.length == 2) {
+        Profil playerProfil = Profil.profils.get(player);
+        if (playerProfil == null) return List.of();
 
-            if(args[0].equalsIgnoreCase("invite")){
-                Player pl = (Player) sender;
+        if (args.length == 1) {
+            return List.of("invite", "accept", "decline", "remove", "block", "unblock", "list", "bypasslimit");
+        }
 
-                return Bukkit.getOnlinePlayers().stream()
+        if (args.length == 2) {
+            String subCommand = args[0].toLowerCase();
+            String partial = args[1].toLowerCase();
+
+            return switch (subCommand) {
+                case "invite" -> Bukkit.getOnlinePlayers().stream()
                         .map(Player::getName)
-                        .filter(name -> !name.equalsIgnoreCase(sender.getName()))
-                        .filter(name -> {
-                            if (sender instanceof Player player) {
-                                Profil playerProfil = Profil.profils.get(player);
-                                if (playerProfil != null) {
-                                    Player target = Bukkit.getPlayer(name);
-                                    return target != null && !playerProfil.friends.contains(target) && !playerProfil.blocked.contains(target) && !playerProfil.friendRequestsSended.contains(target);
-                                }
-                            }
-                            return false;
-                        })
-                        .filter(name -> name.toLowerCase().startsWith(args[1].toLowerCase()))
+                        .filter(name -> !name.equalsIgnoreCase(player.getName()))
+                        .filter(name ->
+                                !playerProfil.getFriends().contains(name) &&
+                                        !playerProfil.getBlocked().contains(name) &&
+                                        !playerProfil.getFriendRequestsSended().contains(name))
+                        .filter(name -> name.toLowerCase().startsWith(partial))
                         .toList();
-            }else if(args[0].equalsIgnoreCase("accept") || args[0].equalsIgnoreCase("decline")){
-                if(sender instanceof Player player){
-                    Profil playerProfil = Profil.profils.get(player);
-                    if(playerProfil != null){
-                        return playerProfil.friendRequestsReceived.stream()
-                                .map(Player::getName)
-                                .filter(name -> name.toLowerCase().startsWith(args[1].toLowerCase()))
-                                .toList();
-                    }
-                }
-            }else if(args[0].equalsIgnoreCase("remove")) {
-                if (sender instanceof Player player) {
-                    Profil playerProfil = Profil.profils.get(player);
-                    if (playerProfil != null) {
-                        return playerProfil.friends.stream()
-                                .map(Player::getName)
-                                .filter(name -> name.toLowerCase().startsWith(args[1].toLowerCase()))
-                                .toList();
-                    }
-                }
-            }else if(args[0].equalsIgnoreCase("block")) {
-                if (sender instanceof Player player) {
-                    Profil playerProfil = Profil.profils.get(player);
-                    if (playerProfil != null) {
-                        return Bukkit.getOnlinePlayers().stream()
-                                .map(Player::getName)
-                                .filter(name -> !name.equalsIgnoreCase(sender.getName()))
-                                .filter(name -> {
-                                    Player target = Bukkit.getPlayer(name);
-                                    return target != null && !playerProfil.friends.contains(target) && !playerProfil.blocked.contains(target);
-                                })
-                                .filter(name -> name.toLowerCase().startsWith(args[1].toLowerCase()))
-                                .toList();
-                    }
-                }
-            }else if(args[0].equalsIgnoreCase("unblock")) {
-                if (sender instanceof Player player) {
-                    Profil playerProfil = Profil.profils.get(player);
-                    if (playerProfil != null) {
-                        return playerProfil.blocked.stream()
-                                .map(Player::getName)
-                                .filter(name -> name.toLowerCase().startsWith(args[1].toLowerCase()))
-                                .toList();
-                    }
-                }
-            }else{
-                return List.of();
-            }
 
+                case "accept", "decline" -> playerProfil.getFriendRequestsReceived().stream()
+                        .filter(name -> name.toLowerCase().startsWith(partial))
+                        .toList();
+
+                case "remove" -> playerProfil.getFriends().stream()
+                        .filter(name -> name.toLowerCase().startsWith(partial))
+                        .toList();
+
+                case "block" -> Bukkit.getOnlinePlayers().stream()
+                        .map(Player::getName)
+                        .filter(name -> !name.equalsIgnoreCase(player.getName()))
+                        .filter(name ->
+                                !playerProfil.getFriends().contains(name) &&
+                                        !playerProfil.getBlocked().contains(name))
+                        .filter(name -> name.toLowerCase().startsWith(partial))
+                        .toList();
+
+                case "unblock" -> playerProfil.getBlocked().stream()
+                        .filter(name -> name.toLowerCase().startsWith(partial))
+                        .toList();
+
+                default -> List.of();
+            };
         }
 
         return List.of();
-    }
-
-    @EventHandler
-    public void onPlayerJoin(PlayerJoinEvent event) {
-        Player player = event.getPlayer();
-        JavaPlugin plugin = JavaPlugin.getProvidingPlugin(getClass());
-        List<String> senders = plugin.getConfig().getStringList("pending_block_messages." + player.getUniqueId());
-        if (!senders.isEmpty()) {
-            for (String senderUUID : senders) {
-                Player sender = Bukkit.getPlayer(UUID.fromString(senderUUID));
-                String senderName = sender != null ? sender.getName() : Bukkit.getOfflinePlayer(UUID.fromString(senderUUID)).getName();
-                MessageUtils.send(player, "you_are_blocked", "{player}", senderName);
-            }
-            plugin.getConfig().set("pending_block_messages." + player.getUniqueId(), null);
-            plugin.saveConfig();
-        }
     }
 }

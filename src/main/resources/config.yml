@@ -12,6 +12,7 @@ messages:
   friend_removed: "§cVous avez retiré §b{player}§c de vos amis."
   removed_by_friend: "§b{player}§c vous a retiré de ses amis."
   not_in_friends: "§eCe joueur n'est pas dans votre liste d'amis."
+  already-in-friends: "§cCe joueur est déjà votre ami."
   already_blocked: "§eCe joueur est déjà bloqué."
   player_blocked: "§aVous avez bloqué §b{player}§a."
   you_are_blocked: "§cVous avez été bloqué par §b{player}§c."
@@ -41,3 +42,4 @@ settings:
     max_friends: 100
 
 allow_self_friend: true
+

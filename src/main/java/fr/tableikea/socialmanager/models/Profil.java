@@ -4,15 +4,19 @@ import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Profil {
-    public final Player player;
-    public ArrayList<Player> friends;
-    public ArrayList<Player> blocked;
-    public ArrayList<Player> friendRequestsSended;
-    public ArrayList<Player> friendRequestsReceived;
+    private final Player player;
 
+    // Utilisation de String pour la persistance (nom du joueur)
+    public List<String> friends;
+    public List<String> blocked;
+    public List<String> friendRequestsSended;
+    public List<String> friendRequestsReceived;
+
+    // Map de tous les profils (associée à chaque joueur en ligne)
     public static Map<Player, Profil> profils = new HashMap<>();
 
     public Profil(Player player) {
@@ -21,65 +25,36 @@ public class Profil {
         this.blocked = new ArrayList<>();
         this.friendRequestsSended = new ArrayList<>();
         this.friendRequestsReceived = new ArrayList<>();
+        profils.put(player, this); // Ajout automatique dans la map
     }
 
     public Player getPlayer() {
         return player;
     }
 
-    public ArrayList<Player> getFriends() {
+    public List<String> getFriends() {
         return friends;
     }
 
-    public ArrayList<Player> getBlocked() {
+    public List<String> getBlocked() {
         return blocked;
     }
 
-    public void addFriend(Player friend) {
-        if (!friends.contains(friend) && !blocked.contains(friend)) {
-            friends.add(friend);
-        }
-    }
-
-    public void removeFriend(Player friend) {
-        friends.remove(friend);
-    }
-
-    public void blockPlayer(Player player) {
-        if (!blocked.contains(player)) {
-            blocked.add(player);
-            friends.remove(player);
-        }
-    }
-
-    public void unblockPlayer(Player player) {
-        blocked.remove(player);
-    }
-
-    public ArrayList<Player> getFriendRequestsSended() {
+    public List<String> getFriendRequestsSended() {
         return friendRequestsSended;
     }
 
-    public ArrayList<Player> getFriendRequestsReceived() {
+    public List<String> getFriendRequestsReceived() {
         return friendRequestsReceived;
     }
 
-    public void sendFriendRequest(Player to) {
-        if (!friendRequestsSended.contains(to) && !friends.contains(to) && !blocked.contains(to)) {
-            friendRequestsSended.add(to);
-        }
+    // Vérifie si un joueur est ami
+    public boolean isFriend(String name) {
+        return friends.contains(name);
     }
 
-    public void receiveFriendRequest(Player from) {
-        if (!friendRequestsReceived.contains(from) && !friends.contains(from) && !blocked.contains(from)) {
-            friendRequestsReceived.add(from);
-        }
-    }
-
-    public void acceptFriendRequest(Player from) {
-        if (friendRequestsReceived.contains(from)) {
-            friendRequestsReceived.remove(from);
-            addFriend(from);
-        }
+    // Vérifie si un joueur est bloqué
+    public boolean isBlocked(String name) {
+        return blocked.contains(name);
     }
 }
