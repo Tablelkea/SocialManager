@@ -2,24 +2,22 @@ package fr.tableikea.socialmanager.manager;
 
 import fr.tableikea.socialmanager.Main;
 import fr.tableikea.socialmanager.models.Profil;
-import org.bukkit.Bukkit;
+import fr.tableikea.socialmanager.utils.MessageFormats;
 import org.bukkit.entity.Player;
+import org.jspecify.annotations.NonNull;
 
-import java.util.ArrayList;
-import java.util.List;
+public class SocialActionsManager {
 
-public class SocialActions {
-
-    public static void saveDataToConfig(Player player, String path, Object object) {
+    public void saveDataToConfig(@NonNull Player player, String path, Object object) {
         Main.getInstance().getConfig().set(player.getName() + "." + path, object);
         Main.getInstance().saveConfig();
     }
 
-    public static Object getDataFromConfig(Player player, String path) {
+    public Object getDataFromConfig(@NonNull Player player, String path) {
         return Main.getInstance().getConfig().get(player.getName() + "." + path);
     }
 
-    public static void addFriends(Player player1, Player player2) {
+    public void addFriends(Player player1, Player player2) {
         Profil pl1 = Profil.profils.get(player1);
         Profil pl2 = Profil.profils.get(player2);
 
@@ -36,7 +34,7 @@ public class SocialActions {
         saveDataToConfig(player2, "friends", pl2.friends);
     }
 
-    public static void removeFriends(Player player1, Player player2) {
+    public void removeFriends(Player player1, Player player2) {
         Profil pl1 = Profil.profils.get(player1);
         Profil pl2 = Profil.profils.get(player2);
 
@@ -50,7 +48,7 @@ public class SocialActions {
         saveDataToConfig(player2, "friends", pl2.friends);
     }
 
-    public static void sendFriendRequest(Player from, Player to) {
+    public void sendFriendRequest(Player from, Player to) {
         Profil pFrom = Profil.profils.get(from);
         Profil pTo = Profil.profils.get(to);
 
@@ -64,7 +62,7 @@ public class SocialActions {
         saveDataToConfig(to, "friendRequestsReceived", pTo.friendRequestsReceived);
     }
 
-    public static void acceptFriendRequest(Player from, Player to) {
+    public void acceptFriendRequest(Player from, Player to) {
         Profil pFrom = Profil.profils.get(from);
         Profil pTo = Profil.profils.get(to);
 
@@ -80,7 +78,7 @@ public class SocialActions {
         addFriends(from, to);
     }
 
-    public static void refuseFriendRequest(Player from, Player to) {
+    public void refuseFriendRequest(Player from, Player to) {
         Profil pFrom = Profil.profils.get(from);
         Profil pTo = Profil.profils.get(to);
 
@@ -94,7 +92,7 @@ public class SocialActions {
         saveDataToConfig(to, "friendRequestsReceived", pTo.friendRequestsReceived);
     }
 
-    public static void blockPlayer(Player from, Player to) {
+    public void blockPlayer(Player from, @NonNull Player to) {
         Profil pFrom = Profil.profils.get(from);
         String toName = to.getName();
         String fromName = from.getName();
@@ -102,18 +100,16 @@ public class SocialActions {
         pFrom.blocked.add(toName);
         saveDataToConfig(from, "blocked", pFrom.blocked);
 
-        // Optionnel : bloquer aussi dans l'autre sens ?
         if (to.isOnline()) {
             Profil pTo = Profil.profils.get(to);
             pTo.blocked.add(fromName);
             saveDataToConfig(to, "blocked", pTo.blocked);
         }
 
-        // Supprimer de la liste d'amis s'ils le sont
         removeFriends(from, to);
     }
 
-    public static void unblockPlayer(Player from, Player to) {
+    public void unblockPlayer(Player from, @NonNull Player to) {
         Profil pFrom = Profil.profils.get(from);
         String toName = to.getName();
         String fromName = from.getName();
@@ -126,5 +122,12 @@ public class SocialActions {
             pTo.blocked.remove(fromName);
             saveDataToConfig(to, "blocked", pTo.blocked);
         }
+    }
+
+    public void sendPluginInformation(@NonNull Player player){
+        player.sendMessage("§6§lSocialManager §f- §ePlugin de gestion sociale");
+        player.sendMessage("§eVersion §f: §a" + MessageFormats.getSettings("plugin-info", "version"));
+        player.sendMessage("§eAuteur §f: §a" + MessageFormats.getSettings("plugin-info", "author"));
+        player.sendMessage("§eGitHub §f: §a" + MessageFormats.getSettings("plugin-info", "website"));
     }
 }

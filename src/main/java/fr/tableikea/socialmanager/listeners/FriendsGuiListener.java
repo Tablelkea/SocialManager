@@ -1,10 +1,10 @@
 package fr.tableikea.socialmanager.listeners;
 
-import fr.tableikea.socialmanager.manager.FriendCommandHandler;
-import fr.tableikea.socialmanager.manager.SocialActions;
+import fr.tableikea.socialmanager.manager.FriendsManager;
+import fr.tableikea.socialmanager.manager.SocialActionsManager;
 import fr.tableikea.socialmanager.models.Profil;
 import fr.tableikea.socialmanager.utils.ItemBuilder;
-import fr.tableikea.socialmanager.utils.MessageUtils;
+import fr.tableikea.socialmanager.utils.MessageFormats;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -18,7 +18,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.List;
 
-public class FriendsGuiEvent implements Listener {
+public class FriendsGuiListener implements Listener {
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
@@ -93,14 +93,14 @@ public class FriendsGuiEvent implements Listener {
                 if (target == null) return;
 
                 if (event.getClick() == ClickType.RIGHT) {
-                    SocialActions.blockPlayer(player, target);
-                    MessageUtils.send(player, "player_blocked", "{player}", target.getName());
-                    MessageUtils.send(target, "you_are_blocked", "{player}", player.getName());
+                    SocialActionsManager.blockPlayer(player, target);
+                    MessageFormats.send(player, "player_blocked", "{player}", target.getName());
+                    MessageFormats.send(target, "you_are_blocked", "{player}", player.getName());
                     player.closeInventory();
                 } else if (event.getClick() == ClickType.LEFT) {
-                    SocialActions.removeFriends(player, target);
-                    MessageUtils.send(player, "friend_removed", "{player}", target.getName());
-                    MessageUtils.send(target, "removed_by_friend", "{player}", player.getName());
+                    SocialActionsManager.removeFriends(player, target);
+                    MessageFormats.send(player, "friend_removed", "{player}", target.getName());
+                    MessageFormats.send(target, "removed_by_friend", "{player}", player.getName());
                     player.closeInventory();
                 }
             }
@@ -110,14 +110,14 @@ public class FriendsGuiEvent implements Listener {
                 if (requester == null) return;
 
                 if (event.getClick() == ClickType.LEFT) {
-                    SocialActions.acceptFriendRequest(player, requester);
-                    MessageUtils.send(player, "friend_request_accepted", "{player}", requester.getName());
-                    MessageUtils.send(requester, "your_request_accepted", "{player}", player.getName());
+                    SocialActionsManager.acceptFriendRequest(player, requester);
+                    MessageFormats.send(player, "friend_request_accepted", "{player}", requester.getName());
+                    MessageFormats.send(requester, "your_request_accepted", "{player}", player.getName());
                     player.closeInventory();
                 } else if (event.getClick() == ClickType.RIGHT) {
-                    SocialActions.refuseFriendRequest(player, requester);
-                    MessageUtils.send(player, "friend_request_declined", "{player}", requester.getName());
-                    MessageUtils.send(requester, "your_request_declined", "{player}", player.getName());
+                    SocialActionsManager.refuseFriendRequest(player, requester);
+                    MessageFormats.send(player, "friend_request_declined", "{player}", requester.getName());
+                    MessageFormats.send(requester, "your_request_declined", "{player}", player.getName());
                     player.closeInventory();
                 }
             }
@@ -127,9 +127,9 @@ public class FriendsGuiEvent implements Listener {
                 if (blocked == null) return;
 
                 if (event.getClick() == ClickType.LEFT) {
-                    SocialActions.unblockPlayer(player, blocked);
-                    MessageUtils.send(player, "player_unblocked", "{player}", blocked.getName());
-                    MessageUtils.send(blocked, "you_are_unblocked", "{player}", player.getName());
+                    SocialActionsManager.unblockPlayer(player, blocked);
+                    MessageFormats.send(player, "player_unblocked", "{player}", blocked.getName());
+                    MessageFormats.send(blocked, "you_are_unblocked", "{player}", player.getName());
                     player.closeInventory();
                 }
             }
@@ -144,28 +144,28 @@ public class FriendsGuiEvent implements Listener {
                 if (event.getClick() == ClickType.LEFT) {
                     int maxFriends = JavaPlugin.getProvidingPlugin(getClass()).getConfig().getInt("settings.max_friends", 100);
 
-                    if (!FriendCommandHandler.isBypassFriendLimit(player) && playerProfil.friends.size() >= maxFriends) {
-                        MessageUtils.send(player, "max_friends_reached");
+                    if (!FriendsManager.isBypassFriendLimit(player) && playerProfil.friends.size() >= maxFriends) {
+                        MessageFormats.send(player, "max_friends_reached");
                         return;
                     }
-                    if (!FriendCommandHandler.isBypassFriendLimit(target) && targetProfil.friends.size() >= maxFriends) {
-                        MessageUtils.send(player, "target_max_friends_reached", "{player}", target.getName());
+                    if (!FriendsManager.isBypassFriendLimit(target) && targetProfil.friends.size() >= maxFriends) {
+                        MessageFormats.send(player, "target_max_friends_reached", "{player}", target.getName());
                         return;
                     }
 
                     if (playerProfil.friends.contains(target)) {
-                        MessageUtils.send(player, "already_in_friends");
+                        MessageFormats.send(player, "already_in_friends");
                         return;
                     }
 
                     if (targetProfil.friendRequestsReceived.contains(player)) {
-                        MessageUtils.send(player, "already_sent_request");
+                        MessageFormats.send(player, "already_sent_request");
                         return;
                     }
 
-                    SocialActions.sendFriendRequest(player, target);
-                    MessageUtils.send(player, "friend_request_sent", "{player}", target.getName());
-                    MessageUtils.send(target, "friend_request_received", "{player}", player.getName());
+                    SocialActionsManager.sendFriendRequest(player, target);
+                    MessageFormats.send(player, "friend_request_sent", "{player}", target.getName());
+                    MessageFormats.send(target, "friend_request_received", "{player}", player.getName());
                     player.closeInventory();
                 }
             }

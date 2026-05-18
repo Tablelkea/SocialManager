@@ -1,6 +1,6 @@
 package fr.tableikea.socialmanager.listeners;
 
-import fr.tableikea.socialmanager.manager.SocialActions;
+import fr.tableikea.socialmanager.manager.SocialActionsManager;
 import fr.tableikea.socialmanager.models.Profil;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
@@ -10,7 +10,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 
 import java.util.List;
 
-public class PlayerJoin implements Listener {
+public class PlayerJoinListener implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
@@ -18,22 +18,22 @@ public class PlayerJoin implements Listener {
         Profil playerProfil = new Profil(player);
 
         // Chargement des données depuis la config
-        Object blockedObj = SocialActions.getDataFromConfig(player, "blocked");
+        Object blockedObj = SocialActionsManager.getDataFromConfig(player, "blocked");
         if (blockedObj instanceof List) {
             playerProfil.blocked.addAll((List<String>) blockedObj);
         }
 
-        Object friendsObj = SocialActions.getDataFromConfig(player, "friends");
+        Object friendsObj = SocialActionsManager.getDataFromConfig(player, "friends");
         if (friendsObj instanceof List) {
             playerProfil.friends.addAll((List<String>) friendsObj);
         }
 
-        Object requestsSentObj = SocialActions.getDataFromConfig(player, "friendRequestsSended");
+        Object requestsSentObj = SocialActionsManager.getDataFromConfig(player, "friendRequestsSended");
         if (requestsSentObj instanceof List) {
             playerProfil.friendRequestsSended.addAll((List<String>) requestsSentObj);
         }
 
-        Object requestsReceivedObj = SocialActions.getDataFromConfig(player, "friendRequestsReceived");
+        Object requestsReceivedObj = SocialActionsManager.getDataFromConfig(player, "friendRequestsReceived");
         if (requestsReceivedObj instanceof List) {
             playerProfil.friendRequestsReceived.addAll((List<String>) requestsReceivedObj);
         }

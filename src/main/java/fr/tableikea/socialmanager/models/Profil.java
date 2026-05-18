@@ -10,13 +10,11 @@ import java.util.Map;
 public class Profil {
     private final Player player;
 
-    // Utilisation de String pour la persistance (nom du joueur)
     public List<String> friends;
     public List<String> blocked;
     public List<String> friendRequestsSended;
     public List<String> friendRequestsReceived;
 
-    // Map de tous les profils (associée à chaque joueur en ligne)
     public static Map<Player, Profil> profils = new HashMap<>();
 
     public Profil(Player player) {
@@ -25,7 +23,7 @@ public class Profil {
         this.blocked = new ArrayList<>();
         this.friendRequestsSended = new ArrayList<>();
         this.friendRequestsReceived = new ArrayList<>();
-        profils.put(player, this); // Ajout automatique dans la map
+        profils.put(player, this);
     }
 
     public Player getPlayer() {
@@ -48,12 +46,10 @@ public class Profil {
         return friendRequestsReceived;
     }
 
-    // Vérifie si un joueur est ami
     public boolean isFriend(String name) {
         return friends.contains(name);
     }
 
-    // Vérifie si un joueur est bloqué
     public boolean isBlocked(String name) {
         return blocked.contains(name);
     }
