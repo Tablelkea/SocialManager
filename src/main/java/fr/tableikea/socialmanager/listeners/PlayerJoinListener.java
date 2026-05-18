@@ -1,5 +1,6 @@
 package fr.tableikea.socialmanager.listeners;
 
+import fr.tableikea.socialmanager.Main;
 import fr.tableikea.socialmanager.manager.SocialActionsManager;
 import fr.tableikea.socialmanager.models.Profil;
 import net.kyori.adventure.text.Component;
@@ -14,26 +15,29 @@ public class PlayerJoinListener implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
+
+        SocialActionsManager socialManager = Main.getInstance().getSocialActionsManager();
+
         Player player = event.getPlayer();
         Profil playerProfil = new Profil(player);
 
         // Chargement des données depuis la config
-        Object blockedObj = SocialActionsManager.getDataFromConfig(player, "blocked");
+        Object blockedObj = socialManager.getDataFromConfig(player, "blocked");
         if (blockedObj instanceof List) {
             playerProfil.blocked.addAll((List<String>) blockedObj);
         }
 
-        Object friendsObj = SocialActionsManager.getDataFromConfig(player, "friends");
+        Object friendsObj = socialManager.getDataFromConfig(player, "friends");
         if (friendsObj instanceof List) {
             playerProfil.friends.addAll((List<String>) friendsObj);
         }
 
-        Object requestsSentObj = SocialActionsManager.getDataFromConfig(player, "friendRequestsSended");
+        Object requestsSentObj = socialManager.getDataFromConfig(player, "friendRequestsSended");
         if (requestsSentObj instanceof List) {
             playerProfil.friendRequestsSended.addAll((List<String>) requestsSentObj);
         }
 
-        Object requestsReceivedObj = SocialActionsManager.getDataFromConfig(player, "friendRequestsReceived");
+        Object requestsReceivedObj = socialManager.getDataFromConfig(player, "friendRequestsReceived");
         if (requestsReceivedObj instanceof List) {
             playerProfil.friendRequestsReceived.addAll((List<String>) requestsReceivedObj);
         }
