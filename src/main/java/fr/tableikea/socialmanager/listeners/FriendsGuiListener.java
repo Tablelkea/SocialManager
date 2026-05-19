@@ -35,14 +35,27 @@ public class FriendsGuiListener implements Listener {
         String title = event.getView().getTitle();
         Profil profil = Profil.profils.get(player);
 
-        event.setCancelled(true);
-
         switch (title) {
-            case "§8§lSOCIAL - Menu" -> guiManager.handleMainMenu(player, profil, itemName);
-            case "§8§lAMIS" -> guiManager.handleFriendsMenu(player, itemName, event.getClick());
-            case "§8§lDEMANDES D'AMIS" -> guiManager.handleRequestsMenu(player, itemName, event.getClick());
-            case "§8§lBLOQUÉS" -> guiManager.handleBlockedMenu(player, itemName, event.getClick());
-            case "§8§lTOUS LES JOUEURS" -> guiManager.handleAllPlayersMenu(player, profil, itemName, event.getClick());
+            case "§8§lSOCIAL - Menu" -> {
+                event.setCancelled(true);
+                guiManager.handleMainMenu(player, profil, itemName);
+            }
+            case "§8§lAMIS" -> {
+                event.setCancelled(true);
+                guiManager.handleFriendsMenu(player, itemName, event.getClick());
+            }
+            case "§8§lDEMANDES D'AMIS" -> {
+                event.setCancelled(true);
+                guiManager.handleRequestsMenu(player, itemName, event.getClick());
+            }
+            case "§8§lBLOQUÉS" ->{
+                event.setCancelled(true);
+                guiManager.handleBlockedMenu(player, itemName, event.getClick());
+            }
+            case "§8§lTOUS LES JOUEURS" -> {
+                event.setCancelled(true);
+                guiManager.handleAllPlayersMenu(player, profil, itemName, event.getClick());
+            }
         }
     }
 }
